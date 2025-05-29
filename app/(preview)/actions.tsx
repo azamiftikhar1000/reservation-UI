@@ -1,5 +1,6 @@
 import { Message, TextStreamMessage } from "@/components/message";
 import { openai } from "@ai-sdk/openai";
+import { google } from "@ai-sdk/google";
 import { CoreMessage, generateId } from "ai";
 import {
   createAI,
@@ -46,7 +47,7 @@ const sendMessage = async (message: string) => {
   const textComponent = <TextStreamMessage content={contentStream.value} />;
 
   const { value: stream } = await streamUI({
-    model: openai("gpt-4o"),
+    model: google("gemini-2.5-flash-preview-04-17"),
     system: `\
       - you are a friendly home automation assistant
       - reply in lower case
