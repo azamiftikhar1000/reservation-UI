@@ -5,8 +5,8 @@ import { AI } from "./actions";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ai-sdk-preview-rsc-genui.vercel.dev"),
-  title: "Generative User Interfaces Preview",
-  description: "Generative UI with React Server Components and Vercel AI SDK",
+  title: "InHotel Reservations Agent",
+  description: "AI-driven hotel booking search and reservation agent",
 };
 
 export default function RootLayout({

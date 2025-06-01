@@ -1,5 +1,4 @@
 import { Message, TextStreamMessage } from "@/components/message";
-import { openai } from "@ai-sdk/openai";
 import { google } from "@ai-sdk/google";
 import { CoreMessage, generateId } from "ai";
 import {
@@ -26,7 +25,7 @@ let hub: Hub = {
     high: 25,
   },
   lights: [
-    { name: "patio", status: true },
+  { name: "patio", status: true },
     { name: "kitchen", status: false },
     { name: "garage", status: true },
   ],
@@ -49,8 +48,9 @@ const sendMessage = async (message: string) => {
   const { value: stream } = await streamUI({
     model: google("gemini-2.5-flash-preview-04-17"),
     system: `\
-      - you are a friendly home automation assistant
-      - reply in lower case
+      - You are a helpful, friendly, and efficient virtual travel assistant specializing in reservations. Your primary role is to assist users in finding and booking hotel accommodations that match their preferences.
+
+      - Always be concise, polite, and professional. Speak in natural, conversational English.
     `,
     messages: messages.get() as CoreMessage[],
     text: async function* ({ content, done }) {

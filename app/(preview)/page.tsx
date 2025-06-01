@@ -18,20 +18,13 @@ export default function Home() {
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
 
-  const suggestedActions = [
-    { title: "View all", label: "my cameras", action: "View all my cameras" },
-    { title: "Show me", label: "my smart home hub", action: "Show me my smart home hub" },
-    {
-      title: "How much",
-      label: "electricity have I used this month?",
-      action: "Show electricity usage",
-    },
-    {
-      title: "How much",
-      label: "water have I used this month?",
-      action: "Show water usage",
-    },
-  ];
+    const suggestedActions = [
+      { title: "Find", label: "hotels in Paris", action: "Find hotels in Paris" },
+      { title: "Check", label: "availability for next weekend", action: "Check availability for next weekend" },
+      { title: "Show", label: "rooms with a sea view", action: "Show rooms with sea view" },
+      { title: "Book", label: "a room from June 10–12", action: "Book room June 10 to June 12" },
+    ];
+    
 
   return (
     <div className="flex flex-row justify-center pb-20 h-dvh bg-white dark:bg-zinc-900">
@@ -43,28 +36,14 @@ export default function Home() {
           {messages.length === 0 && (
             <motion.div className="h-[350px] px-4 w-full md:w-[500px] md:px-0 pt-20">
               <div className="border rounded-lg p-6 flex flex-col gap-4 text-zinc-500 text-sm dark:text-zinc-400 dark:border-zinc-700">
-                <p className="flex flex-row justify-center gap-4 items-center text-zinc-900 dark:text-zinc-50">
-                  <VercelIcon size={16} />
-                  <span>+</span>
-                  <MasonryIcon />
-                </p>
-                <p>
-                  The streamUI function allows you to stream React Server
-                  Components along with your language model generations to
-                  integrate dynamic user interfaces into your application.
-                </p>
-                <p>
-                  {" "}
-                  Learn more about the{" "}
-                  <Link
-                    className="text-blue-500 dark:text-blue-400"
-                    href="https://sdk.vercel.ai/docs/ai-sdk-rsc/streaming-react-components"
-                    target="_blank"
-                  >
-                    streamUI{" "}
-                  </Link>
-                  hook from Vercel AI SDK.
-                </p>
+              <p className="text-center text-[20px] font-semibold" style={{ color: "rgb(136,196,164)" }}>
+                InHotel Reservations Agent
+              </p>
+              <p>
+                I can help you find and book hotels.
+                Ask about destinations, check availability, view hotel options, and make reservations — all in one place.
+              </p>
+            
               </div>
             </motion.div>
           )}
