@@ -9,7 +9,7 @@ import {
 } from "ai/rsc";
 import { ReactNode } from "react";
 import { z } from "zod";
-import { CameraView } from "@/components/camera-view";
+import { HotelView } from "@/components/hotel-view";
 import { HubView } from "@/components/hub-view";
 import { UsageView } from "@/components/usage-view";
 
@@ -48,10 +48,16 @@ const sendMessage = async (message: string) => {
   const { value: stream } = await streamUI({
     model: google("gemini-2.5-flash-preview-04-17"),
     system: `\
-      - You are a helpful, friendly, and efficient virtual travel assistant specializing in reservations. Your primary role is to assist users in finding and booking hotel accommodations that match their preferences.
+      - You are a helpful, friendly, and efficient virtual travel assistant specializing in hotel reservations. Your primary role is to assist users in finding and booking hotel accommodations that match their preferences.
 
+      - You can help users find hotels by location (e.g., "New York", "Los Angeles") or by hotel name (e.g., "Hotel 1").
+      
+      - When users ask about hotels, use the findhotel tool to search for available accommodations.
+      
       - Always be concise, polite, and professional. Speak in natural, conversational English.
     `,
+
+
     messages: messages.get() as CoreMessage[],
     text: async function* ({ content, done }) {
       if (done) {
@@ -68,11 +74,26 @@ const sendMessage = async (message: string) => {
       return textComponent;
     },
     tools: {
-      viewCameras: {
-        description: "view current active cameras",
-        parameters: z.object({}),
-        generate: async function* ({}) {
+      findhotel: {
+        description: "find hotels based on location or hotel name",
+        parameters: z.object({
+          query: z.string().describe("search query for location or hotel name"),
+        }),
+        generate: async function* ({ query }) {
           const toolCallId = generateId();
+
+          // Read hotel data from config.json
+          const fs = await import('fs');
+          const path = await import('path');
+          const configPath = path.join(process.cwd(), 'static_data', 'config.json');
+          const configData = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+          const allHotels = configData.allHotels;
+
+          // Filter hotels based on search query (location or name)
+          const filteredHotels = allHotels.filter((hotel: any) => 
+            hotel.name.toLowerCase().includes(query.toLowerCase()) ||
+            hotel.location.toLowerCase().includes(query.toLowerCase())
+          );
 
           messages.done([
             ...(messages.get() as CoreMessage[]),
@@ -82,8 +103,8 @@ const sendMessage = async (message: string) => {
                 {
                   type: "tool-call",
                   toolCallId,
-                  toolName: "viewCameras",
-                  args: {},
+                  toolName: "findhotel",
+                  args: { query },
                 },
               ],
             },
@@ -92,15 +113,15 @@ const sendMessage = async (message: string) => {
               content: [
                 {
                   type: "tool-result",
-                  toolName: "viewCameras",
+                  toolName: "findhotel",
                   toolCallId,
-                  result: `The active cameras are currently displayed on the screen`,
+                  result: `Found ${filteredHotels.length} hotel(s) matching "${query}"`,
                 },
               ],
             },
           ]);
 
-          return <Message role="assistant" content={<CameraView />} />;
+          return <Message role="assistant" content={<HotelView hotels={filteredHotels} searchQuery={query} />} />;
         },
       },
       viewHub: {
