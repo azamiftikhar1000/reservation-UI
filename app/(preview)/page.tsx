@@ -27,23 +27,23 @@ export default function Home() {
     
 
   return (
-    <div className="flex flex-row justify-center pb-20 h-dvh bg-white dark:bg-zinc-900">
-      <div className="flex flex-col justify-between gap-4">
+    <div className="flex flex-row h-dvh bg-white dark:bg-zinc-900">
+      {/* Left side - Chat */}
+      <div className="flex flex-col justify-between gap-4 w-1/2 border-r border-zinc-200 dark:border-zinc-800">
         <div
           ref={messagesContainerRef}
-          className="flex flex-col gap-3 h-full w-dvw items-center overflow-y-scroll"
+          className="flex flex-col gap-3 h-full overflow-y-scroll px-4"
         >
           {messages.length === 0 && (
-            <motion.div className="h-[350px] px-4 w-full md:w-[500px] md:px-0 pt-20">
+            <motion.div className="h-[350px] w-full pt-20">
               <div className="border rounded-lg p-6 flex flex-col gap-4 text-zinc-500 text-sm dark:text-zinc-400 dark:border-zinc-700">
-              <p className="text-center text-[20px] font-semibold" style={{ color: "rgb(136,196,164)" }}>
-                InHotel Reservations Agent
-              </p>
-              <p>
-                I can help you find and book hotels.
-                Ask about destinations, check availability, view hotel options, and make reservations — all in one place.
-              </p>
-            
+                <p className="text-center text-[20px] font-semibold" style={{ color: "rgb(136,196,164)" }}>
+                  InHotel Reservations Agent
+                </p>
+                <p>
+                  I can help you find and book hotels.
+                  Ask about destinations, check availability, view hotel options, and make reservations — all in one place.
+                </p>
               </div>
             </motion.div>
           )}
@@ -51,7 +51,7 @@ export default function Home() {
           <div ref={messagesEndRef} />
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-2 w-full px-4 md:px-0 mx-auto md:max-w-[500px] mb-4">
+        <div className="grid sm:grid-cols-2 gap-2 w-full px-4 mb-4">
           {messages.length === 0 &&
             suggestedActions.map((action, index) => (
               <motion.div
@@ -88,7 +88,7 @@ export default function Home() {
         </div>
 
         <form
-          className="flex flex-col gap-2 relative items-center"
+          className="flex flex-col gap-2 relative items-center px-4 pb-4"
           onSubmit={async (event) => {
             event.preventDefault();
 
@@ -104,7 +104,7 @@ export default function Home() {
         >
           <input
             ref={inputRef}
-            className="bg-zinc-100 rounded-md px-2 py-1.5 w-full outline-none dark:bg-zinc-700 text-zinc-800 dark:text-zinc-300 md:max-w-[500px] max-w-[calc(100dvw-32px)]"
+            className="bg-zinc-100 rounded-md px-2 py-1.5 w-full outline-none dark:bg-zinc-700 text-zinc-800 dark:text-zinc-300"
             placeholder="Send a message..."
             value={input}
             onChange={(event) => {
@@ -112,6 +112,13 @@ export default function Home() {
             }}
           />
         </form>
+      </div>
+
+      {/* Right side - Hotel Cards */}
+      <div className="w-1/2 overflow-y-auto p-4">
+        <div className="max-w-[800px] mx-auto">
+          {/* Hotel cards will be rendered here */}
+        </div>
       </div>
     </div>
   );

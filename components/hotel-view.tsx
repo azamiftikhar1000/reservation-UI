@@ -22,7 +22,7 @@ interface HotelViewProps {
 
 export const HotelView = ({ hotels, searchQuery }: HotelViewProps) => {
   return (
-    <div className="md:max-w-[600px] max-w-[calc(100dvw-80px)] w-full pb-6">
+    <div className="w-full">
       <div className="flex flex-col gap-4">
         {searchQuery && (
           <div className="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
