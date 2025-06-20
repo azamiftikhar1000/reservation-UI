@@ -1,30 +1,65 @@
 "use client";
 
-import { ReactNode, useRef, useState } from "react";
-import { useActions } from "ai/rsc";
+import { ReactNode, useEffect, useRef, useState } from "react";
+import { useActions, useAIState } from "ai/rsc";
 import { Message } from "@/components/message";
 import { useScrollToBottom } from "@/components/use-scroll-to-bottom";
 import { motion } from "framer-motion";
-import { MasonryIcon, VercelIcon } from "@/components/icons";
 import Link from "next/link";
+import { HotelView } from "@/components/hotel-view";
+
+interface Hotel {
+  name: string;
+  location: string;
+  price: number;
+  description:string;
+  image: string;
+  amenities: string[];
+  rating: number;
+  reviews: number;
+  availability: string;
+  booked: boolean;
+}
 
 export default function Home() {
   const { sendMessage } = useActions();
+  const [history, setHistory] = useAIState();
 
   const [input, setInput] = useState<string>("");
   const [messages, setMessages] = useState<Array<ReactNode>>([]);
+
+  const [hotels, setHotels] = useState<Hotel[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
 
-    const suggestedActions = [
-      { title: "Find", label: "hotels in Paris", action: "Find hotels in Paris" },
-      { title: "Check", label: "availability for next weekend", action: "Check availability for next weekend" },
-      { title: "Show", label: "rooms with a sea view", action: "Show rooms with sea view" },
-      { title: "Book", label: "a room from June 10–12", action: "Book room June 10 to June 12" },
-    ];
-    
+  useEffect(() => {
+    if (history.messages.length > 0) {
+      const lastMessage = history.messages[history.messages.length - 1];
+      if (lastMessage.role === "tool" && lastMessage.content) {
+        const toolCalls = JSON.parse(JSON.stringify(lastMessage.content));
+        const findHotelResult = toolCalls.find(
+          (call: any) => call.toolName === "findhotel"
+        );
+  
+        if (findHotelResult) {
+          const { hotels, searchQuery } = findHotelResult.result;
+          setHotels(hotels);
+          setSearchQuery(searchQuery);
+        }
+      }
+    }
+  }, [history.messages]);
+
+  const suggestedActions = [
+    { title: "Find", label: "hotels in Paris", action: "Find hotels in Paris" },
+    { title: "Check", label: "availability for next weekend", action: "Check availability for next weekend" },
+    { title: "Show", label: "rooms with a sea view", action: "Show rooms with sea view" },
+    { title: "Book", label: "a room from June 10–12", action: "Book room June 10 to June 12" },
+  ];
+  
 
   return (
     <div className="flex flex-row h-dvh bg-white dark:bg-zinc-900">
@@ -99,6 +134,7 @@ export default function Home() {
             setInput("");
 
             const response: ReactNode = await sendMessage(input);
+            
             setMessages((messages) => [...messages, response]);
           }}
         >
@@ -117,7 +153,7 @@ export default function Home() {
       {/* Right side - Hotel Cards */}
       <div className="w-1/2 overflow-y-auto p-4">
         <div className="max-w-[800px] mx-auto">
-          {/* Hotel cards will be rendered here */}
+          <HotelView hotels={hotels} searchQuery={searchQuery} />
         </div>
       </div>
     </div>

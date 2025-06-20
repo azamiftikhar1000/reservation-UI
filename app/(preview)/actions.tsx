@@ -13,6 +13,19 @@ import { HotelView } from "@/components/hotel-view";
 import { HubView } from "@/components/hub-view";
 import { UsageView } from "@/components/usage-view";
 
+interface Hotel {
+  name: string;
+  location: string;
+  price: number;
+  description: string;
+  image: string;
+  amenities: string[];
+  rating: number;
+  reviews: number;
+  availability: string;
+  booked: boolean;
+}
+
 export interface Hub {
   climate: Record<"low" | "high", number>;
   lights: Array<{ name: string; status: boolean }>;
@@ -47,7 +60,7 @@ const sendMessage = async (message: string) => {
 
   const { value: stream } = await streamUI({
     model: google("gemini-2.5-flash-preview-04-17"),
-    system: `\
+    system: `\\
       - You are a helpful, friendly, and efficient virtual travel assistant specializing in hotel reservations. Your primary role is to assist users in finding and booking hotel accommodations that match their preferences.
 
       - You can help users find hotels by location (e.g., "New York", "Los Angeles") or by hotel name (e.g., "Hotel 1").
@@ -115,13 +128,21 @@ const sendMessage = async (message: string) => {
                   type: "tool-result",
                   toolName: "findhotel",
                   toolCallId,
-                  result: `Found ${filteredHotels.length} hotel(s) matching "${query}"`,
+                  result: {
+                    hotels: filteredHotels,
+                    searchQuery: query,
+                  },
                 },
               ],
             },
           ]);
 
-          return <Message role="assistant" content={<HotelView hotels={filteredHotels} searchQuery={query} />} />;
+          return (
+            <Message
+              role="assistant"
+              content={`Found ${filteredHotels.length} hotel(s) matching "${query}"`}
+            />
+          );
         },
       },
       viewHub: {
@@ -200,52 +221,13 @@ const sendMessage = async (message: string) => {
                   type: "tool-result",
                   toolName: "updateHub",
                   toolCallId,
-                  result: `The hub has been updated with the new values`,
+                  result: newHub,
                 },
               ],
             },
           ]);
 
           return <Message role="assistant" content={<HubView hub={hub} />} />;
-        },
-      },
-      viewUsage: {
-        description: "view current usage for electricity, water, or gas",
-        parameters: z.object({
-          type: z.enum(["electricity", "water", "gas"]),
-        }),
-        generate: async function* ({ type }) {
-          const toolCallId = generateId();
-
-          messages.done([
-            ...(messages.get() as CoreMessage[]),
-            {
-              role: "assistant",
-              content: [
-                {
-                  type: "tool-call",
-                  toolCallId,
-                  toolName: "viewUsage",
-                  args: { type },
-                },
-              ],
-            },
-            {
-              role: "tool",
-              content: [
-                {
-                  type: "tool-result",
-                  toolName: "viewUsage",
-                  toolCallId,
-                  result: `The current usage for ${type} is currently displayed on the screen`,
-                },
-              ],
-            },
-          ]);
-
-          return (
-            <Message role="assistant" content={<UsageView type={type} />} />
-          );
         },
       },
     },
@@ -269,6 +251,47 @@ export const AI = createAI<AIState, UIState>({
   initialUIState: [],
   actions: {
     sendMessage,
+    updateHub: async (hub: Hub) => {
+      "use server";
+
+      const newHub = {
+        climate: hub.climate,
+        lights: hub.lights,
+        locks: hub.locks,
+      };
+
+      const aiState = getMutableAIState<typeof AI>();
+      const toolCallId = generateId();
+
+      aiState.done({
+        ...aiState.get(),
+        messages: [
+          ...aiState.get().messages,
+          {
+            role: "assistant",
+            content: [
+              {
+                type: "tool-call",
+                toolCallId,
+                toolName: "updateHub",
+                args: { hub },
+              },
+            ],
+          },
+          {
+            role: "tool",
+            content: [
+              {
+                type: "tool-result",
+                toolCallId,
+                toolName: "updateHub",
+                result: newHub,
+              },
+            ],
+          },
+        ],
+      });
+    },
   },
   onSetAIState: async ({ state, done }) => {
     "use server";
