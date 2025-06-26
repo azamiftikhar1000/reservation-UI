@@ -103,14 +103,19 @@ export const ResizablePanels = ({
       className="flex flex-row h-dvh bg-white dark:bg-zinc-900 relative"
     >
       {/* Left Panel */}
-      {!isExpanded && (
-        <div
-          className="flex flex-col justify-between gap-4 border-r border-zinc-200 dark:border-zinc-800"
-          style={{ width: `${leftWidth}%` }}
-        >
-          {leftPanel}
-        </div>
-      )}
+      <motion.div
+        initial={false}
+        animate={{
+          width: !isExpanded ? `${leftWidth}%` : 0,
+          opacity: !isExpanded ? 1 : 0,
+          pointerEvents: !isExpanded ? 'auto' : 'none',
+        }}
+        transition={isDragging ? { duration: 0, ease: 'linear' } : { type: 'tween', duration: 0.35 }}
+        className="flex flex-col justify-between gap-4 border-r border-zinc-200 dark:border-zinc-800 overflow-hidden"
+        style={{ display: !isExpanded || leftWidth > 0 ? 'flex' : 'none' }}
+      >
+        {!isExpanded && leftPanel}
+      </motion.div>
 
       {/* Resizable Divider */}
       {!isExpanded && (
@@ -126,14 +131,20 @@ export const ResizablePanels = ({
       )}
 
       {/* Right Panel */}
-      <div
+      <motion.div
+        initial={false}
+        animate={{
+          width: isExpanded ? '100%' : `${100 - leftWidth}%`,
+          x: isExpanded ? 0 : 0,
+        }}
+        transition={isDragging ? { duration: 0, ease: 'linear' } : { type: 'tween', duration: 0.35 }}
         className="overflow-y-auto p-4 relative flex-1"
-        style={{ width: isExpanded ? "100%" : `${100 - leftWidth}%`, transition: "width 0.2s" }}
+        style={{ minWidth: 0 }}
       >
         {/* Expand/Collapse Button */}
         {ExpandCollapseButton}
         {rightPanel}
-      </div>
+      </motion.div>
 
       {/* Overlay to prevent text selection while dragging */}
       {isDragging && (
