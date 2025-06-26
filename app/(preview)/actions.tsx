@@ -67,15 +67,14 @@ const sendMessage = async (message: string) => {
       
       - When users ask about hotels, use the findhotel tool to search for available accommodations.
       
-      - When hotel data is provided to you, generate a markdown summary in the following style:
-
-Here are some excellent hotel options in **[Location]**:
-
-- 🏨 **Hotel Name**: Short, engaging description of the hotel, mentioning key features, amenities, or unique aspects.
-- 🏨 **Another Hotel**: Description...
-
-Use bullet points, bold hotel names, and a short, engaging description for each. Do not include any code blocks. Respond only with markdown for the hotel list.
-
+      - When hotel data is provided to you, generate a comprehensive and engaging summary that includes:
+        * Hotel name and location
+        * Price range and value proposition
+        * Key amenities and features
+        * Rating and review count
+        * Availability status
+        * A brief description highlighting what makes each hotel special
+      
       - Present the information in a conversational, helpful manner that helps users make informed decisions.
       
       - Always be concise, polite, and professional. Speak in natural, conversational English.
@@ -119,6 +118,33 @@ Use bullet points, bold hotel names, and a short, engaging description for each.
             hotel.location.toLowerCase().includes(query.toLowerCase())
           );
 
+          // Create a detailed summary of the found hotels
+          let summaryText = "";
+          if (filteredHotels.length === 0) {
+            summaryText = `I couldn't find any hotels matching "${query}". Please try a different search term or location.`;
+          } else if (filteredHotels.length === 1) {
+            const hotel = filteredHotels[0];
+            summaryText = `I found **${hotel.name}** in ${hotel.location}! Here's what you need to know:
+
+- **Location**: ${hotel.location}
+- **Price**: $${hotel.price} per night
+- **Rating**: ${hotel.rating}/5 stars (${hotel.reviews} reviews)
+- **Description**: ${hotel.description}
+- **Amenities**: ${hotel.amenities.join(', ')}
+- **Availability**: ${hotel.availability}
+- **Status**: ${hotel.booked ? 'Currently booked' : 'Available for booking'}
+
+This hotel offers ${hotel.amenities.length} amenities including ${hotel.amenities.slice(0, 2).join(' and ')}. With a ${hotel.rating}-star rating from ${hotel.reviews} guests, it's a solid choice for your stay in ${hotel.location}.`;
+          } else {
+            summaryText = `I found ${filteredHotels.length} hotels matching "${query}":\n\n`;
+            
+            filteredHotels.forEach((hotel: any, index: number) => {
+              summaryText += `### ${index + 1}. **${hotel.name}** - ${hotel.location}\n\n- **Price**: $${hotel.price}/night\n- **Rating**: ${hotel.rating}/5 (${hotel.reviews} reviews)\n- **Description**: ${hotel.description}\n- **Amenities**: ${hotel.amenities.join(', ')}\n- **Status**: ${hotel.availability}${hotel.booked ? ' (Currently booked)' : ''}\n\n`;
+            });
+            
+            summaryText += `These hotels range in price from $${Math.min(...filteredHotels.map((h: any) => h.price))} to $${Math.max(...filteredHotels.map((h: any) => h.price))} per night. Would you like more details about any specific hotel?`;
+          }
+
           messages.done([
             ...(messages.get() as CoreMessage[]),
             {
@@ -142,14 +168,19 @@ Use bullet points, bold hotel names, and a short, engaging description for each.
                   result: {
                     hotels: filteredHotels,
                     searchQuery: query,
+                    summary: summaryText,
                   },
                 },
               ],
             },
           ]);
 
-          // Return empty div to allow LLM to generate response
-          return <div style={{ display: 'none' }} />;
+          return (
+            <Message
+              role="assistant"
+              content={summaryText}
+            />
+          );
         },
       },
       viewHub: {
