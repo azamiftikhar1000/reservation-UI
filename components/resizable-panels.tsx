@@ -67,7 +67,7 @@ export const ResizablePanels = ({
 
   // Expand/collapse button with tooltip
   const ExpandCollapseButton = (
-    <div className="sticky top-0 left-0 z-50 p-2 pointer-events-none">
+    <div className="sticky top-[-4px] left-[-4px] z-50 p-1 pointer-events-none">
       <div className="relative w-fit pointer-events-auto">
         <button
           onClick={() => setIsExpanded((prev) => !prev)}
@@ -90,7 +90,6 @@ export const ResizablePanels = ({
             <div className="bg-zinc-900 text-white text-xs rounded px-2 py-1 shadow-lg whitespace-nowrap">
               {isExpanded ? "Collapse" : "Expand"}
             </div>
-            <div className="w-2 h-2 bg-zinc-900 rotate-45 -mt-1" />
           </div>
         )}
       </div>
