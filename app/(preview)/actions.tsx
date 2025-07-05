@@ -12,19 +12,7 @@ import { z } from "zod";
 import { HotelView } from "@/components/hotel-view";
 import { HubView } from "@/components/hub-view";
 import { UsageView } from "@/components/usage-view";
-
-interface Hotel {
-  name: string;
-  location: string;
-  price: number;
-  description: string;
-  image: string;
-  amenities: string[];
-  rating: number;
-  reviews: number;
-  availability: string;
-  booked: boolean;
-}
+import { Hotel } from "@/components/types";
 
 export interface Hub {
   climate: Record<"low" | "high", number>;
@@ -58,9 +46,16 @@ const sendMessage = async (message: string) => {
   const contentStream = createStreamableValue("");
   const textComponent = <TextStreamMessage content={contentStream.value} />;
 
+  // Load all hotels for processing
+  const fs = await import('fs');
+  const path = await import('path');
+  const configPath = path.join(process.cwd(), 'public', 'config.json');
+  const configData = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+  const allHotels = configData.allHotels;
+
   const { value: stream } = await streamUI({
     model: google("gemini-2.5-flash-preview-04-17"),
-    system: `\\
+    system: `\
       - You are a helpful, friendly, and efficient virtual travel assistant specializing in hotel reservations. Your primary role is to assist users in finding and booking hotel accommodations that match their preferences.
 
       - You can help users find hotels by location (e.g., "New York", "Los Angeles") or by hotel name (e.g., "Hotel 1").
@@ -77,9 +72,10 @@ const sendMessage = async (message: string) => {
       
       - Present the information in a conversational, helpful manner that helps users make informed decisions.
       
+      - Always present hotel lists as Markdown bullet points (never numbers).
+      
       - Always be concise, polite, and professional. Speak in natural, conversational English.
     `,
-
 
     messages: messages.get() as CoreMessage[],
     text: async function* ({ content, done }) {
@@ -94,7 +90,7 @@ const sendMessage = async (message: string) => {
         contentStream.update(content);
       }
 
-      return textComponent;
+      return <TextStreamMessage content={contentStream.value} hotels={allHotels} />;
     },
     tools: {
       findhotel: {
@@ -108,7 +104,7 @@ const sendMessage = async (message: string) => {
           // Read hotel data from config.json
           const fs = await import('fs');
           const path = await import('path');
-          const configPath = path.join(process.cwd(), 'static_data', 'config.json');
+          const configPath = path.join(process.cwd(), 'public', 'config.json');
           const configData = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
           const allHotels = configData.allHotels;
 
@@ -124,25 +120,20 @@ const sendMessage = async (message: string) => {
             summaryText = `I couldn't find any hotels matching "${query}". Please try a different search term or location.`;
           } else if (filteredHotels.length === 1) {
             const hotel = filteredHotels[0];
-            summaryText = `I found **${hotel.name}** in ${hotel.location}! Here's what you need to know:
-
-- **Location**: ${hotel.location}
-- **Price**: $${hotel.price} per night
-- **Rating**: ${hotel.rating}/5 stars (${hotel.reviews} reviews)
-- **Description**: ${hotel.description}
-- **Amenities**: ${hotel.amenities.join(', ')}
-- **Availability**: ${hotel.availability}
-- **Status**: ${hotel.booked ? 'Currently booked' : 'Available for booking'}
-
-This hotel offers ${hotel.amenities.length} amenities including ${hotel.amenities.slice(0, 2).join(' and ')}. With a ${hotel.rating}-star rating from ${hotel.reviews} guests, it's a solid choice for your stay in ${hotel.location}.`;
+            summaryText = `**${hotel.name}**: ${hotel.description}`;
           } else {
             summaryText = `I found ${filteredHotels.length} hotels matching "${query}":\n\n`;
-            
-            filteredHotels.forEach((hotel: any, index: number) => {
-              summaryText += `### ${index + 1}. **${hotel.name}** - ${hotel.location}\n\n- **Price**: $${hotel.price}/night\n- **Rating**: ${hotel.rating}/5 (${hotel.reviews} reviews)\n- **Description**: ${hotel.description}\n- **Amenities**: ${hotel.amenities.join(', ')}\n- **Status**: ${hotel.availability}${hotel.booked ? ' (Currently booked)' : ''}\n\n`;
+
+            filteredHotels.forEach((hotel: any) => {
+              summaryText += `• **${hotel.name}**: ${hotel.description}\n\n`;
             });
+            // summaryText = `I found ${filteredHotels.length} hotels matching "${query}":\n\n`;
             
-            summaryText += `These hotels range in price from $${Math.min(...filteredHotels.map((h: any) => h.price))} to $${Math.max(...filteredHotels.map((h: any) => h.price))} per night. Would you like more details about any specific hotel?`;
+            // filteredHotels.forEach((hotel: any, index: number) => {
+            //   summaryText += `### ${index + 1}. **${hotel.name}** - ${hotel.location}\n\n- **Price**: $${hotel.price}/night\n- **Rating**: ${hotel.rating}/5 (${hotel.reviews} reviews)\n- **Description**: ${hotel.description}\n- **Amenities**: ${hotel.amenities.join(', ')}\n- **Status**: ${hotel.availability}${hotel.booked ? ' (Currently booked)' : ''}\n\n`;
+            // });
+            
+            // summaryText += `These hotels range in price from $${Math.min(...filteredHotels.map((h: any) => h.price))} to $${Math.max(...filteredHotels.map((h: any) => h.price))} per night. Would you like more details about any specific hotel?`;
           }
 
           messages.done([
@@ -179,6 +170,7 @@ This hotel offers ${hotel.amenities.length} amenities including ${hotel.amenitie
             <Message
               role="assistant"
               content={summaryText}
+              hotels={allHotels}
             />
           );
         },

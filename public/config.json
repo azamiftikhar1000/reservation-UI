@@ -17,7 +17,7 @@
             "name": "Hotel 2",
             "location": "Los Angeles",
             "price": 150,
-            "description": "This is a description of the hotel",
+            "description": "Located in the heart of Los Angeles, Hotel 2 offers modern comfort with easy access to the city's top attractions. Enjoy spacious rooms, a rooftop pool, and a vibrant on-site restaurant. Perfect for both business and leisure travelers seeking a stylish stay in LA.",
             "image": "https://images.unsplash.com/photo-1455587734955-081b22074882?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8aG90ZWx8ZW58MHx8MHx8fDA%3D",
             "amenities": ["Free Wi-Fi", "Free Breakfast", "Free Parking"],
             "rating": 4.5,
@@ -30,7 +30,7 @@
             "name": "Hotel 3",
             "location": "Chicago",
             "price": 200,
-            "description": "This is a description of the hotel",
+            "description": "Hotel 3 is a contemporary hotel in downtown Chicago, featuring elegant rooms with city views, a state-of-the-art fitness center, and complimentary breakfast. Guests can easily explore Millennium Park, the Magnificent Mile, and other iconic Chicago landmarks.",
             "image": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGhvdGVsfGVufDB8fDB8fHww",
             "amenities": ["Free Wi-Fi", "Free Breakfast", "Free Parking"],
             "rating": 4.5,
@@ -43,7 +43,7 @@
         "name": "Hotel 4",
         "location": "Paris",
         "price": 250,
-        "description": "This is a description of the hotel",
+        "description": "Experience Parisian charm, nestled in a historic neighborhood close to the Eiffel Tower. The hotel features beautifully decorated rooms, a cozy café, and personalized concierge service to help you make the most of your Paris adventure.",
         "image": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fGhvdGVsfGVufDB8fDB8fHww",
         "amenities": ["Free Wi-Fi", "Free Breakfast", "Free Parking"],
         "rating": 4.5,
@@ -147,7 +147,7 @@
             "name": "Empire Luxury Inn",
             "location": "New York",
             "price": 610,
-            "description": "Experience luxury spa services and gourmet dining.",
+            "description": "Experience luxury with spa services and gourmet dining.",
             "image": "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?w=900&auto=format&fit=crop&q=60",
             "amenities": ["Free Wi-Fi", "Spa", "Gourmet Restaurant", "Valet Parking"],
             "rating": 4.9,
@@ -156,6 +156,43 @@
             "booked": false,
             "website": "https://www.empireluxuryinn.com"
         }
-    ]
+    ],
+    "users": [
+        {
+            "user_id": 462,
+            "name": "Manish Gupta",
+            "first_name": "Manish",
+            "last_name": "Gupta",
+            "email": "camanish.gupta@outlook.com",
+            "work_email": "camanish.gupta@outlook.com",
+            "work_phone": "",
+            "linkedin": "https://www.linkedin.com/in/coach-manish-gupta-hospitility/",
+            "title": "CFO",
+            "bio": null,
+            "photo_url": "https://media.licdn.com/dms/image/v2/D5635AQHL9a-bdNXTGw/profile-framedphoto-shrink_400_400/B56ZaesHmhHgAc-/0/1746419088111?e=1747062000&v=beta&t=2NLb2K2ux1j-GUQGx2AXG32y5fhAzifL3IVWfRbKJDU",
+            "specialization": null,
+            "user_type": "consultant,expert,technology-provider",
+            "organization_name": "eHotel Management School",
+            "organization_logo": "",
+            "behavioral_profile": "Maverick"
+        },
+        {
+            "user_id": 470,
+            "name": "Rohan Parish",
+            "first_name": "Rohan",
+            "last_name": "Parish",
+            "email": "rohanparish1@gmail.com",
+            "work_email": "Rohanparish1@gmail.com",
+            "work_phone": "+91 9822124553",
+            "linkedin": "linkedin.com/in/rohan-parish-9b990632",
+            "title": "Consultant Corporate Chef",
+            "bio": null,
+            "photo_url": "",
+            "specialization": null,
+            "user_type": "consultant",
+            "organization_name": "Kitchen Dynamics Pvt. Ltd.",
+            "organization_logo": "https://m.facebook.com/KitchenDynamics.Goa",
+            "behavioral_profile": "Maverick"
+        }
+]
 }
-

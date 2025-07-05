@@ -17,14 +17,6 @@
     font-family: "uncut sans", sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --foreground-rgb: 255, 255, 255;
-        --background-start-rgb: 0, 0, 0;
-        --background-end-rgb: 0, 0, 0;
-    }
-}
-
 body {
     color: rgb(var(--foreground-rgb));
     background: linear-gradient(
@@ -39,4 +31,21 @@ body {
     .text-balance {
         text-wrap: balance;
     }
+}
+
+.thin-scrollbar {
+  scrollbar-width: thin;           /* For Firefox */
+  scrollbar-color: #cbd5e1 #f1f5f9; /* thumb and track color */
+}
+
+.thin-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: #f1f5f9;
 }
