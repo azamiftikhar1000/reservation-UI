@@ -335,6 +335,8 @@ export default function Home() {
         <ResizablePanels
           leftPanel={leftPanelContent}
           rightPanel={rightPanelContent}
+          onCloseDetailPanel={handleCloseDetailPanel}
+          isDetailPanelOpen={isDetailPanelOpen}
         />
       ) : (
         <div className="flex flex-col lg:h-[100dvh] bg-white">

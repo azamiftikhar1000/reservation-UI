@@ -9,6 +9,8 @@ interface ResizablePanelsProps {
   minLeftWidth?: number;
   maxLeftWidth?: number;
   defaultLeftWidth?: number;
+  onCloseDetailPanel?: () => void;
+  isDetailPanelOpen?: boolean;
 }
 
 export const ResizablePanels = ({
@@ -17,6 +19,8 @@ export const ResizablePanels = ({
   minLeftWidth = 300,
   maxLeftWidth = 800,
   defaultLeftWidth = 50,
+  onCloseDetailPanel,
+  isDetailPanelOpen = false,
 }: ResizablePanelsProps) => {
   const [leftWidth, setLeftWidth] = useState(defaultLeftWidth);
   const [isDragging, setIsDragging] = useState(false);
@@ -163,10 +167,23 @@ export const ResizablePanels = ({
         className="overflow-y-auto relative flex-1"
         style={{ minWidth: 0 }}
       >
-        {/* White stripe at the top with expand button */}
+        {/* White stripe at the top with expand button and close button */}
         <div className="sticky top-0 z-30 bg-white px-4 py-2">
-          <div className="w-fit">
-            {ExpandCollapseButton}
+          <div className="flex items-center justify-between">
+            <div className="w-fit">
+              {ExpandCollapseButton}
+            </div>
+            {isDetailPanelOpen && onCloseDetailPanel && (
+              <button
+                onClick={onCloseDetailPanel}
+                className="p-2 rounded-full hover:bg-zinc-100 transition-colors"
+                aria-label="Close hotel detail panel"
+              >
+                <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
+                  <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            )}
           </div>
         </div>
         <div className="p-4">

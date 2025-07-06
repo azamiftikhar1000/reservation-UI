@@ -50,13 +50,6 @@ export const HotelDetailPanel: React.FC<HotelDetailPanelProps> = ({
           <div className="sticky top-0 bg-white p-4 z-10">
             <div className="flex items-center justify-between">
               <span className="inline-block px-7 py-2 rounded-full bg-black text-white text-sm font-bold">Hotel</span>
-              <button
-                onClick={onClose}
-                className="p-2 rounded-full hover:bg-zinc-100 transition-colors"
-                aria-label="Close panel"
-              >
-                <XIcon className="w-5 h-5 text-black" />
-              </button>
             </div>
           </div>
 
